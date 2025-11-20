@@ -1,27 +1,9 @@
-// structures/hash_table_cuckoo.cpp
-#include "hash_table_cuckoo.h"
+// structures/hash_table_kuku.cpp
+#include "hash_table_kuku.h"
 #include <iostream>
 #include <stdexcept>
 
-// Две хеш-функции для кукушки
-static unsigned int hash1(const std::string& key, int capacity) {
-    unsigned long hash = 5381;
-    for (char c : key) {
-        hash = ((hash << 5) + hash) + c;
-    }
-    return hash % capacity;
-}
-
-static unsigned int hash2(const std::string& key, int capacity) {
-    unsigned long hash = 0;
-    for (char c : key) {
-        hash = (hash * 31 + c) % capacity;
-    }
-    return hash;
-}
-
-// Вспомогательная функция для cuckoo-вставки
-static bool cuckoo_insert_step(HashTableCuckoo* ht, std::string& key, std::string& value, int max_attempts = 500) {
+bool kuku_insert_step(HashTableKuku* ht, std::string& key, std::string& value, int max_attempts) {
     int table = 1; // начинаем с таблицы 1
 
     for (int attempt = 0; attempt < max_attempts; ++attempt) {
@@ -66,8 +48,26 @@ static bool cuckoo_insert_step(HashTableCuckoo* ht, std::string& key, std::strin
     return false; // не удалось вставить
 }
 
-HashTableCuckoo* ht_create(int initial_capacity) {
-    HashTableCuckoo* ht = new HashTableCuckoo;
+
+
+inline unsigned int hash1(const std::string& key, int capacity) {
+    unsigned long hash = 5381;
+    for (char c : key) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % capacity;
+}
+
+inline unsigned int hash2(const std::string& key, int capacity) {
+    unsigned long hash = 0;
+    for (char c : key) {
+        hash = (hash * 31 + c) % capacity;
+    }
+    return hash;
+}
+
+HashTableKuku* ht_create_kuku(int initial_capacity) {
+    HashTableKuku* ht = new HashTableKuku;
     ht->capacity = initial_capacity;
     ht->count = 0;
     ht->load_factor_threshold = 0.9;
@@ -80,13 +80,17 @@ HashTableCuckoo* ht_create(int initial_capacity) {
     return ht;
 }
 
-bool ht_insert(HashTableCuckoo* ht, const std::string& key, const std::string& value) {
+HashTableKuku* ht_create(int initial_capacity) {
+    return ht_create_kuku(initial_capacity);
+}
+
+bool ht_insert(HashTableKuku* ht, const std::string& key, const std::string& value) {
     if (!ht) return false;
 
-    // Проверка на переполнение и реструктуризация
+    // Реструктуризация при заполнении > 90%
     if (static_cast<double>(ht->count) / (2 * ht->capacity) > ht->load_factor_threshold) {
         int new_capacity = ht->capacity * 2;
-        HashTableCuckoo* new_ht = ht_create(new_capacity);
+        HashTableKuku* new_ht = ht_create(new_capacity);
 
         // Переносим все элементы
         for (int i = 0; i < ht->capacity; ++i) {
@@ -102,25 +106,25 @@ bool ht_insert(HashTableCuckoo* ht, const std::string& key, const std::string& v
         if (ht_insert(new_ht, key, value)) {
             // Заменяем старую таблицу
             ht_free(ht);
-            *ht = *new_ht; // копируем содержимое
-            delete new_ht; // удаляем временный указатель
+            *ht = *new_ht;
+            delete new_ht;
             return true;
         } else {
             ht_free(new_ht);
-            return false; // не удалось вставить даже в новую таблицу
+            return false;
         }
     }
 
-    // Попытка вставить в текущую таблицу
+    // Попытка вставить
     std::string k = key;
     std::string v = value;
-    if (cuckoo_insert_step(ht, k, v)) {
+    if (kuku_insert_step(ht, k, v)) {
         return true;
     }
 
     // Если не получилось — реструктуризация
     int new_capacity = ht->capacity * 2;
-    HashTableCuckoo* new_ht = ht_create(new_capacity);
+    HashTableKuku* new_ht = ht_create(new_capacity);
 
     // Переносим все элементы
     for (int i = 0; i < ht->capacity; ++i) {
@@ -145,7 +149,7 @@ bool ht_insert(HashTableCuckoo* ht, const std::string& key, const std::string& v
     return false;
 }
 
-bool ht_get(HashTableCuckoo* ht, const std::string& key, std::string& value) {
+bool ht_get(HashTableKuku* ht, const std::string& key, std::string& value) {
     if (!ht) return false;
     unsigned int index1 = hash1(key, ht->capacity);
     if (ht->occupied1[index1] && ht->keys1[index1] == key) {
@@ -160,7 +164,7 @@ bool ht_get(HashTableCuckoo* ht, const std::string& key, std::string& value) {
     return false;
 }
 
-bool ht_delete(HashTableCuckoo* ht, const std::string& key) {
+bool ht_delete(HashTableKuku* ht, const std::string& key) {
     if (!ht) return false;
     unsigned int index1 = hash1(key, ht->capacity);
     if (ht->occupied1[index1] && ht->keys1[index1] == key) {
@@ -177,11 +181,11 @@ bool ht_delete(HashTableCuckoo* ht, const std::string& key) {
     return false;
 }
 
-int ht_size(HashTableCuckoo* ht) {
+int ht_size(HashTableKuku* ht) {
     return ht ? ht->count : 0;
 }
 
-void ht_free(HashTableCuckoo* ht) {
+void ht_free(HashTableKuku* ht) {
     if (!ht) return;
     delete[] ht->keys1;
     delete[] ht->values1;

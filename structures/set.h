@@ -22,7 +22,9 @@ bool set_add(Set* s, const std::string& key);
 bool set_del(Set* s, const std::string& key);
 bool set_has(Set* s, const std::string& key);
 int set_size(Set* s);
-std::vector<std::string> set_elements(Set* s); // нужно для JSON
+std::vector<std::string> set_elements(Set* s); // для JSON
 void set_free(Set* s);
+
+unsigned int set_hash(const std::string& key, int capacity);
 
 #endif // SET_H

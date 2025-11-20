@@ -1,10 +1,10 @@
-// tasks/task2_set_interactive.cpp
-#include "task2_set_interactive.hpp"
+// tasks/task2_set.cpp
+#include "task2_set.hpp"
 #include "../storage/storage.hpp"
 #include <iostream>
 #include <string>
 
-void task2_run_interactive() {
+void task2_run() {
     std::string setname;
     std::cout << "Введите имя множества: ";
     std::cin >> setname;

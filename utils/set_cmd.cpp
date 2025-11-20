@@ -28,11 +28,11 @@ std::string execute_set_command(const std::string& query) {
         bool added = set_add(s, value);
         return added ? "TRUE" : "FALSE";
     }
-    else if (cmd == "SDEL") {
+    else if (cmd == "SETDEL") {
         bool removed = set_del(s, value);
         return removed ? "TRUE" : "FALSE";
     }
-    else if (cmd == "SISMEMBER") {
+    else if (cmd == "SET_AT") {
         bool exists = set_has(s, value);
         return exists ? "TRUE" : "FALSE";
     }

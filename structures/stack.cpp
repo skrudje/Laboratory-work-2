@@ -41,9 +41,6 @@ void stack_print(Stack* s) {
     SNode* cur = s->top;
     int i = 0;
     while (cur) {
-        // убираем std::cout, если не нужен вывод в final-версии
-        // или оставляем — как в твоём stack.txt
-        // std::cout << "[" << i++ << "] " << cur->data << std::endl;
         cur = cur->next;
     }
 }

@@ -13,7 +13,7 @@ struct HashTableDouble {
     double load_factor_threshold;
 };
 
-HashTableDouble* ht_create(int initial_capacity = 16);
+HashTableDouble* ht_create_double(int initial_capacity = 16);
 bool ht_insert(HashTableDouble* ht, const std::string& key, const std::string& value);
 bool ht_get(HashTableDouble* ht, const std::string& key, std::string& value);
 bool ht_delete(HashTableDouble* ht, const std::string& key);

@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 
-// Копируем логику из прошлого файла
 int priority(const std::string& op) {
     if (op == "!") return 3;
     if (op == "&") return 2;
@@ -109,5 +108,5 @@ void task1_run() {
     std::string expr;
     std::cout << "Введите логическое выражение (0, 1, !, &, |, ^, скобки): ";
     std::getline(std::cin >> std::ws, expr);
-    std::cout << "Результат: " << evaluate_logic_expression(expr) << std::endl;
+    std::cout << "Результат: \n" << evaluate_logic_expression(expr) << std::endl;
 }

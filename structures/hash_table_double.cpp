@@ -3,8 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
-// Первая хеш-функция
-unsigned int hash1(const std::string& key, int capacity) {
+inline unsigned int hash1(const std::string& key, int capacity) {
     unsigned long hash = 5381;
     for (char c : key) {
         hash = ((hash << 5) + hash) + c;
@@ -12,16 +11,15 @@ unsigned int hash1(const std::string& key, int capacity) {
     return hash % capacity;
 }
 
-// Вторая хеш-функция (не должна возвращать 0)
-unsigned int hash2(const std::string& key, int capacity) {
+inline unsigned int hash2(const std::string& key, int capacity) {
     unsigned long hash = 0;
     for (char c : key) {
         hash = (hash * 31 + c) % (capacity - 1);
     }
-    return hash + 1; // чтобы не было 0
+    return hash + 1;
 }
 
-HashTableDouble* ht_create(int initial_capacity) {
+HashTableDouble* ht_create_double(int initial_capacity) {
     HashTableDouble* ht = new HashTableDouble;
     ht->capacity = initial_capacity;
     ht->count = 0;
@@ -42,7 +40,7 @@ bool ht_insert(HashTableDouble* ht, const std::string& key, const std::string& v
         std::string* new_values = new std::string[new_capacity];
         bool* new_occupied = new bool[new_capacity]();
 
-        // Переносим элементы
+        // Перенос элементов
         for (int i = 0; i < ht->capacity; ++i) {
             if (ht->occupied[i]) {
                 unsigned int h1 = hash1(ht->keys[i], new_capacity);

@@ -4,11 +4,11 @@
 #include <vector>
 #include <cstring>
 #include "storage/storage.hpp"
-#include "utils/menu.hpp"      // содержит run_all_tasks()
-#include "utils/set_cmd.hpp"   // содержит execute_set_command()
+#include "utils/menu.hpp"      
+#include "utils/set_cmd.hpp"   
 
 int main(int argc, char* argv[]) {
-    // Проверяем, переданы ли --file и --query → режим команды (только задание 2)
+    // Проверяем, переданы ли --file и --query (для 2 задания)
     std::string filename = "";
     std::string query = "";
 
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (!filename.empty() && !query.empty()) {
-        // === Режим команды: ТОЛЬКО задание 2 (множество) ===
+        // для 2 таска (множество)
         storage_load(filename);
         std::string result = execute_set_command(query);
         if (!result.empty()) {
@@ -31,7 +31,6 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    // === Интерактивный режим: все 7 заданий ===
     run_all_tasks();
     return 0;
 }

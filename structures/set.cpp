@@ -1,8 +1,8 @@
-// structures/set.cpp
+// structures/  
 #include "set.h"
 #include <vector>
 
-const int SET_INITIAL_CAPACITY = 64;
+const int SET_INITIAL_CAPACITY = 16;
 
 unsigned int set_hash(const std::string& key, int capacity) {
     unsigned long hash = 5381;
@@ -67,7 +67,7 @@ int set_size(Set* s) {
     return s ? s->count : 0;
 }
 
-// --- НОВАЯ ФУНКЦИЯ: возвращает все элементы множества ---
+// возвращает все элементы множества
 std::vector<std::string> set_elements(Set* s) {
     std::vector<std::string> elems;
     for (int i = 0; i < s->capacity; ++i) {

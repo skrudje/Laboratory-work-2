@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <sstream>
 #include <algorithm>
 #include <cmath>
 
@@ -15,7 +14,7 @@ void task3_run() {
 
     Set* s = g_sets[setname];
     if (!s) {
-        std::cout << "Множество не найдено.\n";
+        std::cout << "АТД Множество не задано, вернитесь во 2 задание и укажите его.\n";
         return;
     }
 
@@ -25,6 +24,7 @@ void task3_run() {
         return;
     }
 
+    // Преобразуем элементы в числа
     std::vector<int> nums;
     for (const auto& s : elems) {
         try {
@@ -43,6 +43,7 @@ void task3_run() {
     for (int x : nums) total_sum += x;
     int target = total_sum / 2;
 
+    // dp[i] = true, если можно получить сумму i
     std::vector<bool> dp(target + 1, false);
     dp[0] = true;
 
@@ -85,5 +86,5 @@ void task3_run() {
     for (int x : subset2) std::cout << x << " ";
     std::cout << "\nСумма: " << (total_sum - best) << std::endl;
 
-    std::cout << "Разница: " << std::abs((total_sum - best) - best) << std::endl;
+    std::cout << "Разница: " << std::abs((total_sum - best) - best) << "\n" << std::endl;
 }

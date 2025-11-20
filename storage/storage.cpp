@@ -1,6 +1,8 @@
 // storage/storage.cpp
 #include "storage.hpp"
 #include "../nlohmann/json.hpp"
+#include "../structures/hash_table_double.h"
+#include "../structures/hash_table_kuku.h"
 #include <fstream>
 
 using json = nlohmann::json;
@@ -8,6 +10,9 @@ using json = nlohmann::json;
 std::map<std::string, Set*> g_sets;
 std::map<std::string, Array*> g_arrays;
 LFUCache* g_lfu = nullptr;
+
+std::map<std::string, HashTableDouble*> g_hash_tables_double;
+std::map<std::string, HashTableKuku*> g_hash_tables_kuku;
 
 void storage_load(const std::string& filename) {
     std::ifstream f(filename);
@@ -37,12 +42,25 @@ void storage_load(const std::string& filename) {
         }
     }
 
-    // LFU — если есть в файле
-    if (j.contains("lfu")) {
-        // реализация зависит от структуры LFU
-        // пока оставим как есть
+        // Хеш-таблицы — если есть в файле
+    if (j.contains("hash_tables_double")) {
+        for (auto& [name, arr] : j["hash_tables_double"].items()) {
+            HashTableDouble* ht = ht_create_double(16);
+            // загрузка элементов
+            g_hash_tables_double[name] = ht;
+        }
+    }
+
+    if (j.contains("hash_tables_kuku")) {
+        for (auto& [name, arr] : j["hash_tables_kuku"].items()) {
+            HashTableKuku* ht = ht_create_kuku(16);
+            // загрузка элементов
+            g_hash_tables_kuku[name] = ht;
+        }
     }
 }
+
+
 
 void storage_save(const std::string& filename) {
     json j;
@@ -53,6 +71,15 @@ void storage_save(const std::string& filename) {
 
     for (const auto& [name, a] : g_arrays) {
         j["arrays"][name] = std::vector<std::string>(a->data, a->data + a->size);
+    }
+
+    // Сохранение хеш-таблицы
+    for (const auto& [name, ht] : g_hash_tables_double) {
+        // сохранение элементов
+    }
+
+    for (const auto& [name, ht] : g_hash_tables_kuku) {
+        // сохранение элементов
     }
 
     std::ofstream f(filename);
